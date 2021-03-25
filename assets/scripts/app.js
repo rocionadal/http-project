@@ -5,28 +5,40 @@ const fetchButton = document.querySelector('#available-posts button');
 const postList = document.querySelector('ul');
 
 function sendHttpRequest(method, url, data) {
-  const promise = new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open(method, url);
-    xhr.responseType = 'json';
-    
-    xhr.onload = function() {
-      if (hxr.status >= 200 && xhr.status < 300) {
-        resolve(xhr.response);
-        // const listOfPosts = JSON.parse(xhr.response);
-      } else {
-        reject(new Error('Something went wrong!')); // handle server side error
-      }
-    };
-
-    xhr.onerror = function() { // handle network error
-      reject(new Error('Failed to send request!'));
+  return fetch(url, {
+    method: method,
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json'
     }
-    
-    xhr.send(JSON.stringify(data));
+  }).then(response => {
+    return response.json();
   });
 
-  return promise;
+  // ------ OLD JS ------
+  // const promise = new Promise((resolve, reject) => {
+  //   const xhr = new XMLHttpRequest();
+  // //   xhr.setRequestHaeder('Content-Type', 'application/json');
+  //   xhr.open(method, url);
+  //   xhr.responseType = 'json';
+    
+  //   xhr.onload = function() {
+  //     if (hxr.status >= 200 && xhr.status < 300) {
+  //       resolve(xhr.response);
+  //       // const listOfPosts = JSON.parse(xhr.response);
+  //     } else {
+  //       reject(new Error('Something went wrong!')); // handle server side error
+  //     }
+  //   };
+
+  //   xhr.onerror = function() { // handle network error
+  //     reject(new Error('Failed to send request!'));
+  //   }
+    
+  //   xhr.send(JSON.stringify(data));
+  // });
+
+  // return promise;
 }
 
 async function fetchPosts() {
