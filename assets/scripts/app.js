@@ -11,9 +11,19 @@ function sendHttpRequest(method, url, data) {
     headers: {
       'Content-Type': 'application/json'
     }
-  }).then(response => {
-    return response.json();
-  });
+  })
+    .then(response => {
+      if (response.status >= 200 && response.status < 300) {
+        return response.json();
+      } else {
+        response.json()
+        throw new Error('Something went wrong!'); // handle server error
+      }
+    })
+    .catch(error => { // handle network error
+      console.log(error);
+      throw new Error('Something went wrong!');
+    });
 
   // ------ OLD JS ------
   // const promise = new Promise((resolve, reject) => {
@@ -27,6 +37,7 @@ function sendHttpRequest(method, url, data) {
   //       resolve(xhr.response);
   //       // const listOfPosts = JSON.parse(xhr.response);
   //     } else {
+  //       xhr.response;
   //       reject(new Error('Something went wrong!')); // handle server side error
   //     }
   //   };
