@@ -11,9 +11,17 @@ function sendHttpRequest(method, url, data) {
     xhr.responseType = 'json';
     
     xhr.onload = function() {
-      resolve(xhr.response);
-      // const listOfPosts = JSON.parse(xhr.response);
+      if (hxr.status >= 200 && xhr.status < 300) {
+        resolve(xhr.response);
+        // const listOfPosts = JSON.parse(xhr.response);
+      } else {
+        reject(new Error('Something went wrong!')); // handle server side error
+      }
     };
+
+    xhr.onerror = function() { // handle network error
+      reject(new Error('Failed to send request!'));
+    }
     
     xhr.send(JSON.stringify(data));
   });
@@ -22,10 +30,11 @@ function sendHttpRequest(method, url, data) {
 }
 
 async function fetchPosts() {
-  const responseData = await sendHttpRequest(
-    'GET', 
-    'https://jsonplaceholder.typicode.com/posts'
-  );
+  try {
+    const responseData = await sendHttpRequest(
+      'GET', 
+      'https://jsonplaceholder.typicode.com/posts'
+    );
     const listOfPosts = responseData;
     for (const post of listOfPosts) {
       const postEl = document.importNode(postTemplate.content, true);
@@ -34,6 +43,9 @@ async function fetchPosts() {
       postEl.querySelector('li').id = post.id;
       listElement.append(postEl);
     }
+  } catch (error) {
+    alert(error.message);
+  }
 }
 
 async function createPost(title, content) {
@@ -44,7 +56,11 @@ async function createPost(title, content) {
     userId: userId
   };
 
-  sendHttpRequest('POST', 'https://jsonplaceholder.typicode.com/posts', post);
+  sendHttpRequest(
+    'POST', 
+    'https://jsonplaceholder.typicode.com/posts', 
+    post
+  );
 }
 
 fetchButton.addEventListener('click', fetchPosts);
@@ -59,7 +75,10 @@ form.addEventListener('submit', event => {
 postList.addEventListener('click', event => {
   if (event.target.tagName === 'BUTTON') {
     const postId = event.target.closest('li').id;
-    sendHttpRequest('DELETE', `https://jsonplaceholder.typicode.com/posts/${postId}`);
+    sendHttpRequest(
+      'DELETE', 
+      `https://jsonplaceholder.typicode.com/posts/${postId}`
+    );
     console.log(`Post with id of ${postId} was deleted`);
   }
 })
