@@ -25,7 +25,7 @@ function sendHttpRequest(method, url, data) {
       throw new Error('Something went wrong!');
     });
 
-  // ------ OLD JS ------
+  // ------ OLD JS XML ------
   // const promise = new Promise((resolve, reject) => {
   //   const xhr = new XMLHttpRequest();
   // //   xhr.setRequestHaeder('Content-Type', 'application/json');
